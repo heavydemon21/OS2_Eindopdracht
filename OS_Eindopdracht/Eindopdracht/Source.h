@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <math.h>
+#include <cstdio>
 
 void bassCoefficients(int intensity, double* b0, double* b1, double* b2, double* a1, double* a2)
 {
@@ -43,4 +44,11 @@ void trebleCoefficients(int intensity, double* b0, double* b1, double* b2, doubl
     *b0 = (a * ((a + 1) + (a - 1) * cos(w0) + 2.0 * sqrt(a) * alpha)) / a0;
     *b1 = (-2.0 * a * ((a - 1) + (a + 1) * cos(w0))) / a0;
     *b2 = (a * ((a + 1) + (a - 1) * cos(w0) - 2.0 * sqrt(a) * alpha)) / a0;
+}
+
+int16_t fileSize(FILE* file) {
+    fseek(file, 0, SEEK_END);
+
+    return ftell(file);
+
 }
