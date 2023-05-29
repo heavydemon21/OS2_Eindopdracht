@@ -1,12 +1,15 @@
 #include "Source.h"
 
 #include <iostream>
+#include <vector>
 #include <string>
 #include <fstream>
 
 
 #include "Queue.h"
-const int16_t 2048;
+
+const int16_t blockSize = 2048;
+
 
 int main(int argc, const char* argv[]) {
 
@@ -53,14 +56,35 @@ int main(int argc, const char* argv[]) {
     bassCoefficients(bassIntensity, &bb0, &bb1, &bb2, &ba1, &ba2);
     trebleCoefficients(trebleIntensity, &tb0, &tb1, &tb2, &ta1, &ta2);
 
-    FILE* inputFile = fopen(inputFileName.c_str(), "rb");
-    FILE* outputFile = fopen(outputFileName.c_str(), "wb");
+    FILE* inputFile;
+    FILE* outputFile;
+    fopen_s(&inputFile, inputFileName.c_str(), "rb");
+    fopen_s(&outputFile, outputFileName.c_str(), "wb");
 
-    int16_t inputF_size = fileSize(inputFile);
+    if (!inputFile) {
+        std::cerr << "Failed to open input.pcm" << std::endl;
+        return 1;
+    }
 
+    long inputF_size = fileSize(inputFile);
+    int numBlocks = inputF_size / blockSize;
 
+    Queue blockQueue(numBlocks);
 
-    Queue blockQueue(inputF_size);
+    for (int i = 0; i < numBlocks; i++)
+    {
+        fseek(inputFile, i * numBlocks, SEEK_END);
+
+        int16_t data[blockSize];
+        fread(data, sizeof(int16_t), blockSize, inputFile);
+
+        Block* newBlock = new Block(i);
+        newBlock->setData(data);
+
+        blockQueue._put("Producer", newBlock);
+    }
+
+    fclose(inputFile);
 
 	return 0;
 }

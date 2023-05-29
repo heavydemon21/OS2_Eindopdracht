@@ -16,7 +16,7 @@ public:
         phase = 0;
     }
 
-    void setData(char* newData)
+    void setData(int16_t* newData)
     {
         for (int i = 0; i < 2048; i++)
         {

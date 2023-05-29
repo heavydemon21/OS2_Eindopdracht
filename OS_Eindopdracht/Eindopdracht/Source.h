@@ -46,9 +46,12 @@ void trebleCoefficients(int intensity, double* b0, double* b1, double* b2, doubl
     *b2 = (a * ((a + 1) + (a - 1) * cos(w0) - 2.0 * sqrt(a) * alpha)) / a0;
 }
 
-int16_t fileSize(FILE* file) {
-    fseek(file, 0, SEEK_END);
+long fileSize(FILE* file) {
 
-    return ftell(file);
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    return fileSize;
 
 }
