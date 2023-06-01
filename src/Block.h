@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
 
+#define BLOCK_SIZE 2048
+
 class Block
 {
 private:
@@ -22,6 +24,10 @@ public:
         {
             data[i] = newData[i];
         }
+    }
+
+    int16_t* getData(){
+        return data;
     }
 
     void setPhase(int newPhase)
