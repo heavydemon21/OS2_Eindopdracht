@@ -56,10 +56,8 @@ int main(int argc, const char* argv[]) {
     bassCoefficients(bassIntensity, &bb0, &bb1, &bb2, &ba1, &ba2);
     trebleCoefficients(trebleIntensity, &tb0, &tb1, &tb2, &ta1, &ta2);
 
-    FILE* inputFile;
-    FILE* outputFile;
-    fopen_s(&inputFile, inputFileName.c_str(), "rb");
-    fopen_s(&outputFile, outputFileName.c_str(), "wb");
+    FILE* inputFile = fopen( inputFileName.c_str(), "rb");
+    FILE* outputFile = fopen( outputFileName.c_str(), "wb");
 
     if (!inputFile) {
         std::cerr << "Failed to open input.pcm" << std::endl;
