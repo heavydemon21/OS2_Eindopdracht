@@ -1,12 +1,12 @@
 #pragma once
 #include <cstdint>
 
-#define BLOCK_SIZE 2048
+#define BLOCK_SIZE 1024
 
 class Block
 {
 private:
-    int16_t data[2048];
+    int16_t data[BLOCK_SIZE];
     int phase; // 0 = created, 1 = filled,  2 = bassed, 3 = bassed+trebled, 4 = written
     int index;
 
@@ -20,7 +20,7 @@ public:
 
     void setData(int16_t* newData)
     {
-        for (int i = 0; i < 2048; i++)
+        for (int i = 0; i < BLOCK_SIZE; i++)
         {
             data[i] = newData[i];
         }

@@ -8,8 +8,6 @@
 
 #include "Queue.h"
 
-const int16_t blockSize = 2048;
-
 
 int main(int argc, const char* argv[]) {
 
@@ -65,7 +63,7 @@ int main(int argc, const char* argv[]) {
     }
 
     long inputF_size = fileSize(inputFile);
-    int numBlocks = inputF_size / blockSize;
+    int numBlocks = inputF_size / BLOCK_SIZE;
 
     Queue blockQueue(numBlocks);
 
@@ -73,8 +71,8 @@ int main(int argc, const char* argv[]) {
     {
         fseek(inputFile, i * numBlocks, SEEK_END);
 
-        int16_t data[blockSize];
-        fread(data, sizeof(int16_t), blockSize, inputFile);
+        int16_t data[BLOCK_SIZE];
+        fread(data, sizeof(int16_t), BLOCK_SIZE, inputFile);
 
         Block* newBlock = new Block(i);
         newBlock->setData(data);
