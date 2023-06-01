@@ -7,6 +7,7 @@
 
 
 #include "Queue.h"
+#include "worker.h"
 
 
 int main(int argc, const char* argv[]) {
@@ -81,6 +82,38 @@ int main(int argc, const char* argv[]) {
     }
 
     fclose(inputFile);
+
+    // Init workers
+    Worker* workers[numThreads];
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        workers[i] = new Worker;
+        workers[i]->set_bass(bb0,bb1,bb2,ba1,ba2);
+        workers[i]->set_treble(tb0,tb1,tb2,ta1,ta2);
+    }
+    
+
+    while (/* Queue not empty */ 0)
+    {
+        if (/* free worker */ 0){
+            //Find free worker
+            int idx = 0;//free worker idx
+
+            //Assign to worker found in prev step
+            workers[idx]->new_block(blockQueue._get("consumer"));//pops block address
+
+        }
+
+        //Store new blocks (if worker done) somewhere,
+        //Mark that worker as free again.
+    }
+    
+    // clean-up workers
+    for (int i = 0; i < numThreads; i++)
+    {
+        delete workers[i];
+    }
 
 	return 0;
 }

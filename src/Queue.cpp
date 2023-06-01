@@ -3,7 +3,8 @@
 Queue::Queue(int size) {
 	_size = size;
 	this->buffer = new Block[_size];
-
+	putpos = 0;
+	getpos = 0;
 }
 
 Queue::~Queue() {

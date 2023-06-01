@@ -3,10 +3,12 @@
 Worker::Worker(Block* in)
 {
    this->data_in = in;
+   this->data_out = new Block;
 }
 
 Worker::~Worker()
 {
+   delete data_in;
    delete data_out;
    data_out = nullptr;
    data_in = nullptr;
@@ -27,16 +29,16 @@ void Worker::set_treble(double &tb0, double &tb1, double &tb2, double &ta1, doub
    this->_ta2 = ta2;
 }
 
-Block* Worker::biquad(double b0, double b1, double b2, double a1, double a2){
+void Worker::biquad(double b0, double b1, double b2, double a1, double a2){
    int16_t* x = this->data_in->getData();
    int16_t y[BLOCK_SIZE];
    y[0]=x[0];
    for (int n = 0; n < BLOCK_SIZE; n++)
    {
       if (n < 2){ //approximates for unknown data.
-         y[n] = (int16_t) b0*x[n] + b1*x[n-n] + b2*x[n-n] + y[n-n]*a1 + a2*y[n-n];
+         y[n] = (int16_t) b0*x[n] + b1*x[0] + b2*x[0] + a1*y[0] + a2*y[0];
       } else {
-         y[n] = b0*x[n] + b1*x[n-1] + b2*x[n-2] + y[n-1]*a1 + a2*y[n-2];
+         y[n] = b0*x[n] + b1*x[n-1] + b2*x[n-2] + a1*y[n-1] + a2*y[n-2];
       }
    }
    this->data_out->setData(y);
