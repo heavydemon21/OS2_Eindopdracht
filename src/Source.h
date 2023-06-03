@@ -70,8 +70,8 @@ void fill_FILE(Block* in, FILE* output) {
         fseek(output, in->getIndex() * BLOCK_SIZE, SEEK_SET);
         if (in->getIndex() == 0) {
             std::cout << in->getData() << std::endl;
-            fwrite(in->getData(), sizeof(int16_t), BLOCK_SIZE, output);
         }
+        fwrite(in->getData(), sizeof(int16_t), BLOCK_SIZE, output);
         fseek(output, 0, SEEK_SET);
 
 

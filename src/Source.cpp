@@ -69,7 +69,8 @@ int main(int argc, const char* argv[]) {
 
     for (int i = 0; i < numBlocks; i++)
     {
-        fseek(inputFile, i * numBlocks, SEEK_END);
+        fseek(inputFile, 0, SEEK_SET);
+        fseek(inputFile, i * BLOCK_SIZE, SEEK_SET);
         
         int16_t data[BLOCK_SIZE];
         fread(data, sizeof(int16_t), BLOCK_SIZE, inputFile);
@@ -81,6 +82,7 @@ int main(int argc, const char* argv[]) {
         if (newBlock->getIndex() ==0) {
             std::cout << data << std::endl;
         }
+
     }
 
     fclose(inputFile);
@@ -95,7 +97,7 @@ int main(int argc, const char* argv[]) {
         workers[i]->set_treble(tb0,tb1,tb2,ta1,ta2);
     }
     int i = 0;
-    std::vector<std::thread> workerThreads;
+    //std::vector<std::thread> workerThreads;
 
     while (blockQueue.queueCount() != 0)
     {
@@ -106,10 +108,11 @@ int main(int argc, const char* argv[]) {
 
             fill_FILE(data, outputFile);
 
-            std::thread workerThread(&Worker::work, workers[i]);
-            workerThread.detach();
+            workers[i]->work();
+            //std::thread workerThread(&Worker::work, workers[i]);
+            //workerThread.detach();
 
-            workerThreads.push_back(std::move(workerThread));
+            //workerThreads.push_back(std::move(workerThread));
         }
       
 
@@ -131,7 +134,7 @@ int main(int argc, const char* argv[]) {
     //}
 
 
-    workerThreads.clear();
+    //workerThreads.clear();
     delete[] workers;
 
 
