@@ -11,7 +11,7 @@ private:
    double _bb0, _bb1, _bb2, _ba1, _ba2;
    double _ta1, _ta2, _tb0, _tb1, _tb2;
 
-
+   bool hasWork = false;
 public:
    Worker() = default;
    Worker(Block* in);
@@ -30,6 +30,8 @@ public:
    virtual void biquad(double b0, double b1, double b2, double a1, double a2);
    virtual void work();
    virtual void swap_blocks();
+
+   bool isDone() const;
 };
 
 

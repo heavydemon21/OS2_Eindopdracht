@@ -1,13 +1,12 @@
+#define _CRT_SECURE_NO_DEPRECATE
+#include <stdio.h>
+
 #include "Source.h"
 
 #include <iostream>
 #include <vector>
-#include <string>
-#include <fstream>
+#include <thread>
 
-
-#include "Queue.h"
-#include "worker.h"
 
 
 int main(int argc, const char* argv[]) {
@@ -71,7 +70,7 @@ int main(int argc, const char* argv[]) {
     for (int i = 0; i < numBlocks; i++)
     {
         fseek(inputFile, i * numBlocks, SEEK_END);
-
+        
         int16_t data[BLOCK_SIZE];
         fread(data, sizeof(int16_t), BLOCK_SIZE, inputFile);
 
@@ -79,12 +78,15 @@ int main(int argc, const char* argv[]) {
         newBlock->setData(data);
 
         blockQueue._put("Producer", newBlock);
+        if (newBlock->getIndex() ==0) {
+            std::cout << data << std::endl;
+        }
     }
 
     fclose(inputFile);
 
     // Init workers
-    Worker* workers[numThreads];
+    Worker** workers = new Worker*[numThreads];
 
     for (int i = 0; i < numThreads; i++)
     {
@@ -92,28 +94,47 @@ int main(int argc, const char* argv[]) {
         workers[i]->set_bass(bb0,bb1,bb2,ba1,ba2);
         workers[i]->set_treble(tb0,tb1,tb2,ta1,ta2);
     }
-    
+    int i = 0;
+    std::vector<std::thread> workerThreads;
 
-    while (/* Queue not empty */ 0)
+    while (blockQueue.queueCount() != 0)
     {
-        if (/* free worker */ 0){
-            //Find free worker
-            int idx = 0;//free worker idx
-
+        if (!workers[i]->isDone()) {
+            
             //Assign to worker found in prev step
-            workers[idx]->new_block(blockQueue._get("consumer"));//pops block address
+            Block* data = workers[i]->new_block(blockQueue._get("consumer"));//pops block address
 
+            fill_FILE(data, outputFile);
+
+            std::thread workerThread(&Worker::work, workers[i]);
+            workerThread.detach();
+
+            workerThreads.push_back(std::move(workerThread));
         }
+      
 
         //Store new blocks (if worker done) somewhere,
         //Mark that worker as free again.
-    }
-    
-    // clean-up workers
-    for (int i = 0; i < numThreads; i++)
-    {
-        delete workers[i];
-    }
 
+        i = (i + 1) % numThreads;
+
+    }
+    //bool allThreadsDone = false;
+    //while (!allThreadsDone) {
+    //    for (int tel = 0; tel < numThreads; tel++) {
+    //        if (!workers[i]->isDone()) {
+    //            tel = 0;
+    //        }
+    //    }
+
+    //    allThreadsDone = true;
+    //}
+
+
+    workerThreads.clear();
+    delete[] workers;
+
+
+    fclose(outputFile);
 	return 0;
 }

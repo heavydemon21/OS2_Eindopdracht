@@ -50,15 +50,22 @@ void Worker::swap_blocks(){
    data_in = temp;
 }
 
+bool Worker::isDone() const
+{
+    return hasWork;
+}
+
 void Worker::work(){
    biquad(_bb0, _bb1, _bb2, _ba1, _ba2);
    data_out->setPhase(2);
    swap_blocks();
    biquad(_tb0, _tb1, _tb2, _ta1, _ta2);
    data_out->setPhase(3);
+   hasWork = false;
 }
 
 Block* Worker::new_block(Block* in){
+   hasWork = true;
    Block* temp = data_out;
    data_in = in;
    data_out= in;

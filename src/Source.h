@@ -3,6 +3,12 @@
 
 #include <math.h>
 #include <cstdio>
+#include <string>
+#include <fstream>
+
+
+#include "Queue.h"
+#include "worker.h"
 
 void bassCoefficients(int intensity, double* b0, double* b1, double* b2, double* a1, double* a2)
 {
@@ -54,4 +60,21 @@ long fileSize(FILE* file) {
 
     return fileSize;
 
+}
+
+
+void fill_FILE(Block* in, FILE* output) {
+    if (in == nullptr) return;
+
+    if (in->getPhase() == 3) {
+        fseek(output, in->getIndex() * BLOCK_SIZE, SEEK_SET);
+        if (in->getIndex() == 0) {
+            std::cout << in->getData() << std::endl;
+            fwrite(in->getData(), sizeof(int16_t), BLOCK_SIZE, output);
+        }
+        fseek(output, 0, SEEK_SET);
+
+
+        //delete in;
+    }
 }

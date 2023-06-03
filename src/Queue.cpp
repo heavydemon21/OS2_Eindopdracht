@@ -13,6 +13,8 @@ Queue::~Queue() {
 }
 
 Block* Queue::_get(const char* consumername) {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	Block* Block = &buffer[getpos];
 	getpos = (getpos + 1) % _size;
 	count--;
@@ -25,4 +27,9 @@ void Queue::_put(const char* producername, Block* Block)
 	buffer[putpos] = *Block;
 	putpos = (putpos + 1) % _size;
 	count++;
+}
+
+int Queue::queueCount() const
+{
+	return count;
 }
